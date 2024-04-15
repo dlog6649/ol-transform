@@ -1,0 +1,30 @@
+{
+  "name": "ol-rectangle",
+  "version": "1.0.0",
+  "description": "",
+  "author": "dlog6649@gmail.com",
+  "keywords": [
+    "ol",
+    "openlayers",
+    "gis",
+    "transform"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "ol": "9.1.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "7.6.0",
+    "eslint": "8.57.0",
+    "eslint-config-prettier": "8.7.0",
+    "eslint-plugin-import": "2.29.1",
+    "eslint-plugin-prettier": "4.2.1",
+    "prettier": "2.8.8",
+    "typescript": "5.4.5",
+    "typescript-eslint": "7.6.0"
+  },
+  "license": "MIT"
+}
