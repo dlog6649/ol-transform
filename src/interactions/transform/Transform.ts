@@ -349,7 +349,7 @@ export default class Transform extends PointerInteraction {
         if (!(feat instanceof Feature) || !feat.getGeometry() || !this._shouldGetFeature(evt, feat, layer)) {
           return
         }
-        if (HandleFeature.isHandleFeature(feat)) {
+        if (layer === this._handleLayer) {
           return feat
         }
 
