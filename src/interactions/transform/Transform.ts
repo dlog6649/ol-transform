@@ -105,7 +105,7 @@ export default class Transform extends PointerInteraction {
 
   protected handleDownEvent(evt: MapBrowserEvent<MouseEvent>) {
     const handleOrBody = this.selectFeature(evt)
-    if (!handleOrBody) {
+    if (!handleOrBody && !this._addCondition(evt)) {
       this._selections.clear()
     }
     this._prevSelections.clear()
