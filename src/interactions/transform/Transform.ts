@@ -325,9 +325,28 @@ export default class Transform extends PointerInteraction {
     return false
   }
 
-  protected handleMoveEvent(evt: MapBrowserEvent<MouseEvent>) {
-    super.handleMoveEvent(evt)
-    this.dispatchTransformEvent("mousemove", evt)
+  handleEvent(e: MapBrowserEvent<MouseEvent>): boolean {
+    switch (e.type) {
+      case "click":
+        this.dispatchTransformEvent("click", e)
+        break
+      case "singleclick":
+        this.dispatchTransformEvent("singleclick", e)
+        break
+      case "dblclick":
+        this.dispatchTransformEvent("dblclick", e)
+        break
+      case "pointerup":
+        this.dispatchTransformEvent("pointerup", e)
+        break
+      case "pointerdown":
+        this.dispatchTransformEvent("pointerdown", e)
+        break
+      case "pointermove":
+        this.dispatchTransformEvent("pointermove", e)
+        break
+    }
+    return super.handleEvent(e)
   }
 
   private dispatchTransformEvent(type: TransformEventType, evt: MapBrowserEvent<MouseEvent>): void {
