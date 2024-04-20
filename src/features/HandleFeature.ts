@@ -3,7 +3,7 @@ import { Geometry } from "ol/geom"
 
 import { type TransformMode } from "../interactions/transform/Transform"
 
-export class HandleFeature<GeomType extends Geometry = Geometry> extends Feature<GeomType> {
+export default class HandleFeature<GeomType extends Geometry = Geometry> extends Feature<GeomType> {
   readonly body: Feature
   readonly mode: TransformMode
   readonly index: number

@@ -13,7 +13,7 @@ import { Source, Vector as VectorSource } from "ol/source"
 import { Fill, RegularShape, Stroke, Style } from "ol/style"
 
 import TransformEvent, { type TransformEventType } from "./TransformEvent"
-import { HandleFeature } from "../../features/HandleFeature"
+import HandleFeature from "../../features/HandleFeature"
 import { calcDistance, rearrangeCoords } from "../../util"
 import type { OmitFrom } from "../../util-types"
 
@@ -38,7 +38,7 @@ export default class Transform extends PointerInteraction {
   private _layers: Layer[]
   private _addCondition: (evt: MapBrowserEvent<MouseEvent>) => boolean
   private _shouldGetFeature: (evt: MapBrowserEvent<MouseEvent>, feat: Feature, layer: Layer) => boolean
-  private _isTransformed = false
+  private _transformed = false
   private _strokeColor?: string
   private _strokeWidth: number
   private _startCoord: Coordinate = [0, 0]
@@ -186,7 +186,7 @@ export default class Transform extends PointerInteraction {
 
   protected handleDragEvent(evt: MapBrowserEvent<MouseEvent>) {
     this._handleLayer.getSource()!.clear()
-    this._isTransformed = true
+    this._transformed = true
 
     if (this._mode === "translate") {
       const [x, y] = evt.coordinate
@@ -303,7 +303,7 @@ export default class Transform extends PointerInteraction {
 
     this.dispatchTransformEvent("mouseup", evt)
 
-    if (this._isTransformed) {
+    if (this._transformed) {
       switch (this._mode) {
         case "translate":
           this.dispatchTransformEvent("translateend", evt)
@@ -320,7 +320,7 @@ export default class Transform extends PointerInteraction {
 
     this.drawHandles()
     this._mode = ""
-    this._isTransformed = false
+    this._transformed = false
 
     return false
   }
