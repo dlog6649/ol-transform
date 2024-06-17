@@ -1,8 +1,10 @@
 import { Collection, Map as OlMap, MapBrowserEvent } from "ol"
 import Feature from "ol/Feature"
+import { unByKey } from "ol/Observable"
 import { Color } from "ol/color"
 import { type ColorLike } from "ol/colorlike"
 import { type Coordinate } from "ol/coordinate"
+import { EventsKey } from "ol/events"
 import { boundingExtent, getCenter } from "ol/extent"
 import { Geometry, Point } from "ol/geom"
 import { fromExtent } from "ol/geom/Polygon"
@@ -54,6 +56,12 @@ export default class Transform extends PointerInteraction {
     startCoord: [0, 0],
   }
   private _headInverted = false
+  private _selectionsEvent = () => {
+    this.watchFeatures()
+    this.drawHandles()
+  }
+  private _featureListeners: EventsKey[] = []
+  private _updating = false
 
   constructor(options: TransformOptions = {}) {
     super()
@@ -71,7 +79,7 @@ export default class Transform extends PointerInteraction {
       ...options.layerOptions,
     })
 
-    this._selections.on(["add", "remove"], () => this.drawHandles())
+    this._selections.on(["add", "remove"], this._selectionsEvent)
   }
 
   setMap(map: OlMap | null): void {
@@ -80,6 +88,10 @@ export default class Transform extends PointerInteraction {
 
     super.setMap(map)
     map?.addLayer(this._handleLayer)
+
+    if (!map) {
+      this._selections.un(["add", "remove"], this._selectionsEvent)
+    }
   }
 
   get mode(): TransformMode {
@@ -186,6 +198,7 @@ export default class Transform extends PointerInteraction {
 
   protected handleDragEvent(evt: MapBrowserEvent<MouseEvent>) {
     this._handleLayer.getSource()!.clear()
+    this._updating = true
     this._transformed = true
 
     if (this._mode === "translate") {
@@ -287,6 +300,7 @@ export default class Transform extends PointerInteraction {
         break
     }
     this.dispatchTransformEvent("transforming", evt)
+    this._updating = false
   }
 
   protected handleUpEvent(evt: MapBrowserEvent<MouseEvent>): boolean {
@@ -578,5 +592,19 @@ export default class Transform extends PointerInteraction {
   private rotatePoint([x, y]: Coordinate, anchor: Coordinate, angle: number): Coordinate {
     const [ax, ay] = anchor
     return [(x - ax) * Math.cos(angle) - (y - ay) * Math.sin(angle) + ax, (x - ax) * Math.sin(angle) + (y - ay) * Math.cos(angle) + ay]
+  }
+
+  private watchFeatures(): void {
+    this._featureListeners.forEach(unByKey)
+    this._featureListeners = []
+    this._selections.forEach((f) => {
+      this._featureListeners.push(
+        f.on("change", () => {
+          if (!this._updating) {
+            this.drawHandles()
+          }
+        }),
+      )
+    })
   }
 }
